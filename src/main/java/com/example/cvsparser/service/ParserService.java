@@ -1,14 +1,13 @@
 package com.example.cvsparser.service;
 
-import com.example.cvsparser.dto.Attribute;
-import com.example.cvsparser.dto.AttributeRepository;
-import com.example.cvsparser.dto.Option;
-import com.example.cvsparser.dto.OptionRepository;
+import com.example.cvsparser.dto.*;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -30,23 +29,23 @@ public class ParserService {
 
     Logger logger = LoggerFactory.getLogger(ParserService.class);
 
-    public void readAttributes (String fileName) {
+    public void readCsv(String fileName, Class<?> myClass) {
 
+        List<Option> optionList = new ArrayList<>();
         List<Attribute> attributeList = new ArrayList<>();
         String[] labels = null;
         String[] lineArray = null;
         String line = null;
-        long id=0;
-
+        long id = 0;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
 
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
 
                 Map<String, String> labelMap = new HashMap<>();
-                lineArray = StringEscapeUtils.unescapeHtml4(line).split( ";;|;");
+                lineArray = StringEscapeUtils.unescapeHtml4(line).split(";;|;");
 
-                if(labels == null || labels.length==0){
+                if (labels == null || labels.length == 0) {
                     labels = lineArray;
                     continue;
                 }
@@ -55,51 +54,19 @@ public class ParserService {
                     labelMap.put(labels[i], lineArray[i]);
                 }
 
-                Attribute attribute = new Attribute(++id, lineArray[0], labelMap);
-                attributeList.add(attribute);
-            }
-
-            attributeRepository.saveAll(attributeList);
-
-            } catch (FileNotFoundException exception) {
-            logger.error(exception.getMessage(), exception);
-            } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            }
-    }
-
-    public void readOptions (String fileName) {
-
-        List<Option> optionList = new ArrayList<>();
-        String[] labels = null;
-        String[] lineArray = null;
-        String line = null;
-        long id=0;
-
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-
-            while((line = reader.readLine()) != null) {
-
-                Map<String, String> labelMap = new HashMap<>();
-                lineArray = StringEscapeUtils.unescapeHtml4(line).split( ";;|;");
-
-                if(labels == null || labels.length==0){
-                    labels = lineArray;
-                    continue;
+                if (myClass.getCanonicalName().equals(Attribute.class.getCanonicalName())) {
+                    Attribute attribute = new Attribute(++id, lineArray[0], labelMap);
+                    attributeList.add(attribute);
+                    attributeRepository.save(attribute);
+                } else if (myClass.getCanonicalName().equals(Option.class.getCanonicalName())) {
+                    Attribute attribute = attributeRepository.findAllByCode(lineArray[lineArray.length - 2]);
+                    if (attribute != null) {
+                        Option option = new Option(++id, lineArray[0], lineArray[lineArray.length - 2], lineArray[lineArray.length - 1], attribute, labelMap);
+                        optionList.add(option);
+                        optionRepository.save(option);
+                    }
                 }
-
-                for (int i = 1; i < lineArray.length; i++) {
-                    labelMap.put(labels[i], lineArray[i]);
-                }
-
-                Attribute attribute = attributeRepository.findAllByCode(lineArray[lineArray.length-2]);
-                Option option = new Option(++id, lineArray[0], lineArray[lineArray.length-2],lineArray[lineArray.length-1], attribute, labelMap);
-                optionList.add(option);
             }
-
-            optionRepository.saveAll(optionList);
-
         } catch (FileNotFoundException exception) {
             logger.error(exception.getMessage(), exception);
         } catch (IOException e) {

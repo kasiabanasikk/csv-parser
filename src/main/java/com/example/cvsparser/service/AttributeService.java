@@ -7,9 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,8 +23,9 @@ public class AttributeService {
 
     public List<Attribute> getAllAttributes(String lang) {
         try {
-
-            if()
+            if(lang != null){
+//                attributeRepository.findAll().stream().
+            }
             return attributeRepository.findAll();
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -35,18 +33,19 @@ public class AttributeService {
         return Collections.emptyList();
     }
 
-
-
-    public Attribute getAttribute(String code) {
+    public List<String> getAttribute(String code, String lang) {
         try {
-            return attributeRepository.findAllByCode(code);
+            List<String> attributeList = new ArrayList<>();
+            if(lang != null){
+               Attribute attribute = attributeRepository.findAllByCode(code);
+                attributeList.add(attribute.getLabels().get(lang));
+                attribute.getOptionList().forEach(o -> attributeList.add(o.getLabels().get(lang)));
+                return attributeList;
+            }
+//            return attributeRepository.findAllByCode(code);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
         return null;
     }
-
-//    public OptionEntity getOption() {
-//        return optionRepository.findById(2L).get();
-//    }
 }

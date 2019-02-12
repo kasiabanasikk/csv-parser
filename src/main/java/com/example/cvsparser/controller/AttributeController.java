@@ -23,7 +23,7 @@ public class AttributeController {
     }
 
     @RequestMapping("/attributes/{code}")
-    public Attribute getAllAttributes(@PathVariable("code") String code, @RequestParam(value = "lang", required = false) String lang){
-        return attributeService.getAttribute(code);
+    public List<String> getAllAttributes(@PathVariable("code") String code, @RequestParam(value = "lang", required = false) String lang){
+        return attributeService.getAttribute(code, lang);
     }
 }

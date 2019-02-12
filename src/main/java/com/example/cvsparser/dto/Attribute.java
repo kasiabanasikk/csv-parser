@@ -1,9 +1,9 @@
 package com.example.cvsparser.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.HashMap;

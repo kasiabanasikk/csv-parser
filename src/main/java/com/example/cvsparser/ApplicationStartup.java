@@ -1,6 +1,7 @@
 package com.example.cvsparser;
 
-import com.zaxxer.hikari.HikariConfig;
+import com.example.cvsparser.dto.Option;
+import com.example.cvsparser.service.ParserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import java.nio.file.Paths;
 public class ApplicationStartup implements ApplicationListener<ApplicationReadyEvent> {
 
     @Autowired
-    Parser parser;
+    ParserService parserService;
 
     Logger logger = LoggerFactory.getLogger(ApplicationStartup.class);
 
@@ -27,7 +28,7 @@ public class ApplicationStartup implements ApplicationListener<ApplicationReadyE
                 "\\main\\resources\\options.csv";
         String pathAttributes = Paths.get(".").toAbsolutePath().normalize().toString()+"\\src" +
                 "\\main\\resources\\attributes.csv";
-        parser.readCvs(pathAttributes);
-//        parser.readCvs(pathOptions);
+        parserService.readAttributes(pathAttributes);
+        parserService.readOptions(pathOptions);
     }
 }

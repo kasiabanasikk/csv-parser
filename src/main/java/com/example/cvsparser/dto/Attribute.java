@@ -1,27 +1,31 @@
 package com.example.cvsparser.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+@Data
 @Entity
-public class Attribute {
+public class Attribute implements Parsable{
 
     @Id
     Long id;
     @JsonProperty("code")
     String code;
+
     @JsonProperty("label")
     @ElementCollection
     Map<String, String> labels = new HashMap<>();
 
-//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "attributeEntity")
-//    @JsonManagedReference
-//    List<OptionEntity> optionEntityList;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "attribute")
+    @JsonManagedReference
+    List<Option> optionList;
 
     public Attribute() {
     }
@@ -32,17 +36,13 @@ public class Attribute {
         this.labels = labels;
     }
 
-    public Long getId() {
-        return id;
+    @Override
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public Map<String, String> getLabels() {
-        return labels;
+    @Override
+    public void setLabels(Map<String, String> labels) {
+        this.labels = labels;
     }
-
-
-    public String getCode() {
-        return code;
-    }
-
 }

@@ -1,9 +1,12 @@
 package com.example.cvsparser.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.HashMap;
@@ -12,9 +15,19 @@ import java.util.Map;
 
 @Data
 @Entity
-public class Attribute implements Parsable{
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Attribute {
+
+    @Transient
+    Logger logger = LoggerFactory.getLogger(Attribute.class);
+    @Transient
+    private static final String LABEL_PATTERN = "^label\\-.*";
+    @Transient
+    private static final String CODE_PATTERN = "code";
+
 
     @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
     @JsonProperty("code")
     String code;
@@ -36,13 +49,19 @@ public class Attribute implements Parsable{
         this.labels = labels;
     }
 
-    @Override
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    @Override
-    public void setLabels(Map<String, String> labels) {
-        this.labels = labels;
+    public Attribute(Map<String, String> values){
+        String key;
+        String value;
+        for (Map.Entry<String,String> entry : values.entrySet()){
+            key = entry.getKey();
+            value = entry.getValue();
+            if (key.equals(CODE_PATTERN)){
+                this.code = value;
+            }else if(key.matches(LABEL_PATTERN)){
+                labels.put(key, value);
+            }else{
+                logger.warn(String.format("Attribute header unknown: %s with value of: %s", key, value));
+            }
+        }
     }
 }

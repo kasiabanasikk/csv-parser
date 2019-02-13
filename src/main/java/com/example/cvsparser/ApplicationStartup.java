@@ -31,7 +31,7 @@ public class ApplicationStartup implements ApplicationListener<ApplicationReadyE
                 "\\main\\resources\\options.csv";
         String pathAttributes = Paths.get(".").toAbsolutePath().normalize().toString()+"\\src" +
                 "\\main\\resources\\attributes.csv";
-        parserService.readCsv(pathAttributes, Attribute.class);
-        parserService.readCsv(pathOptions, Option.class);
+        parserService.sendToAttributeRepository(pathAttributes);
+        parserService.sendToOptionRepository(pathOptions);
     }
 }

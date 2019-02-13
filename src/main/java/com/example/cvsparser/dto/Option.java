@@ -2,21 +2,31 @@ package com.example.cvsparser.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
 @Entity
-public class Option implements Parsable{
+public class Option {
+
+    @Transient
+    Logger logger = LoggerFactory.getLogger(Option.class);
+    @Transient
+    private static final String LABEL_PATTERN = "^label\\-.*";
+    @Transient
+    private static final String CODE_PATTERN = "code";
+    @Transient
+    private static final String SORT_ORDER_PATTERN = "sort_order";
+    @Transient
+    private static final String ATTRIBUTE_PATTERN = "attribute";
 
     @Id
+    @GeneratedValue(strategy= GenerationType.AUTO)
     Long id;
     @JsonProperty("code")
     String code;
@@ -49,13 +59,23 @@ public class Option implements Parsable{
         this.attribute = attribute;
     }
 
-    @Override
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    @Override
-    public void setLabels(Map<String, String> labels) {
-        this.labels = labels;
+    public Option(Map<String, String> values, Attribute attribute){
+        String key;
+        String value;
+        for (Map.Entry<String,String> entry : values.entrySet()){
+            key = entry.getKey();
+            value = entry.getValue();
+            if (key.equals(CODE_PATTERN)){
+                this.code = value;
+            }if (key.equals(ATTRIBUTE_PATTERN)){
+                this.attributeCode = value;
+            }if (key.equals(SORT_ORDER_PATTERN)){
+                this.sortOrder = value;
+            }else if(key.matches(LABEL_PATTERN)){
+                labels.put(key, value);
+            }else{
+                logger.warn(String.format("Option header unknown: %s with value of: %s", key, value));
+            }
+        }
     }
 }

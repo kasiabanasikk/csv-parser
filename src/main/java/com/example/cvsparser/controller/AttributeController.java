@@ -1,6 +1,7 @@
 package com.example.cvsparser.controller;
 
 import com.example.cvsparser.dto.Attribute;
+import com.example.cvsparser.dto.AttributeResponseObject;
 import com.example.cvsparser.service.AttributeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,18 +13,19 @@ import java.util.List;
 
 
 @RestController
-public class AttributeController {
+public class ItemController {
 
     @Autowired
     AttributeService attributeService;
 
     @RequestMapping("/attributes")
-    public List<Attribute> getAllAttributes(@RequestParam(value = "lang", required = false) String lang){
-        return attributeService.getAllAttributes(lang);
+    public List<Attribute> getAllAttributes(){
+        return attributeService.getAllAttributes();
     }
 
     @RequestMapping("/attributes/{code}")
-    public List<String> getAllAttributes(@PathVariable("code") String code, @RequestParam(value = "lang", required = false) String lang){
-        return attributeService.getAttribute(code, lang);
+    public AttributeResponseObject getAttributeByLang(@PathVariable("code") String code,
+                                                      @RequestParam(value = "lang") String lang){
+        return attributeService.getAttributeByLang(code, lang);
     }
 }

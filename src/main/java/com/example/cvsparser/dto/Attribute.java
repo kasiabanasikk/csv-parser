@@ -1,5 +1,6 @@
 package com.example.cvsparser.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,10 +20,13 @@ import java.util.Map;
 public class Attribute {
 
     @Transient
-    Logger logger = LoggerFactory.getLogger(Attribute.class);
+    @JsonIgnore
+    final Logger logger = LoggerFactory.getLogger(Attribute.class);
     @Transient
+    @JsonIgnore
     private static final String LABEL_PATTERN = "^label\\-.*";
     @Transient
+    @JsonIgnore
     private static final String CODE_PATTERN = "code";
 
 
@@ -36,7 +40,7 @@ public class Attribute {
     @ElementCollection
     Map<String, String> labels = new HashMap<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "attribute")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "attributeObject")
     @JsonManagedReference
     List<Option> optionList;
 

@@ -1,6 +1,7 @@
 package com.example.cvsparser.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -15,14 +16,19 @@ import java.util.Map;
 public class Option {
 
     @Transient
-    Logger logger = LoggerFactory.getLogger(Option.class);
+    @JsonIgnore
+    final Logger logger = LoggerFactory.getLogger(Option.class);
     @Transient
+    @JsonIgnore
     private static final String LABEL_PATTERN = "^label\\-.*";
     @Transient
+    @JsonIgnore
     private static final String CODE_PATTERN = "code";
     @Transient
+    @JsonIgnore
     private static final String SORT_ORDER_PATTERN = "sort_order";
     @Transient
+    @JsonIgnore
     private static final String ATTRIBUTE_PATTERN = "attribute";
 
     @Id
@@ -37,7 +43,8 @@ public class Option {
 
     @ManyToOne
     @JsonBackReference
-    private Attribute attribute;
+//    @JsonIgnore
+    private Attribute attributeObject;
 
     @JsonProperty("label")
     @ElementCollection
@@ -56,24 +63,25 @@ public class Option {
 
     public Option(Long id, String code, String attributeCode, String sortOrder, Attribute attribute, Map<String, String> labels) {
         this(id, code, attributeCode, sortOrder, labels);
-        this.attribute = attribute;
+        this.attributeObject = attribute;
     }
 
     public Option(Map<String, String> values, Attribute attribute){
         String key;
         String value;
+        this.attributeObject = attribute;
         for (Map.Entry<String,String> entry : values.entrySet()){
             key = entry.getKey();
             value = entry.getValue();
             if (key.equals(CODE_PATTERN)){
                 this.code = value;
-            }if (key.equals(ATTRIBUTE_PATTERN)){
+            } else if (key.equals(ATTRIBUTE_PATTERN)){
                 this.attributeCode = value;
-            }if (key.equals(SORT_ORDER_PATTERN)){
+            } else if (key.equals(SORT_ORDER_PATTERN)){
                 this.sortOrder = value;
-            }else if(key.matches(LABEL_PATTERN)){
+            } else if(key.matches(LABEL_PATTERN)){
                 labels.put(key, value);
-            }else{
+            } else{
                 logger.warn(String.format("Option header unknown: %s with value of: %s", key, value));
             }
         }

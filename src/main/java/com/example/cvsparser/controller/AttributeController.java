@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @RestController
-public class ItemController {
+public class AttributeController {
 
     @Autowired
     AttributeService attributeService;

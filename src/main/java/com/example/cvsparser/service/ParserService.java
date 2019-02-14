@@ -5,10 +5,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import org.w3c.dom.Attr;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -30,19 +27,17 @@ public class ParserService {
     private List<Map<String,String>> readCsv(String fileName) {
 
         List<Map<String,String>> itemsList = new ArrayList<>();
-        List<Option> optionList = new ArrayList<>();
 
         String[] labels = null;
         String[] lineArray = null;
         String line = null;
-//        long id = 0;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
 
             while ((line = reader.readLine()) != null) {
 
                 Map<String, String> labelMap = new HashMap<>();
-                lineArray = StringEscapeUtils.unescapeHtml4(line).split(";;|;");
+                lineArray = StringEscapeUtils.unescapeHtml4(line).split(";");
 
                 if (labels == null || labels.length == 0) {
                     labels = lineArray;
@@ -50,22 +45,10 @@ public class ParserService {
                 }
 
                 for (int i = 0; i < lineArray.length; i++) {
-                    labelMap.put(labels[i], lineArray[i]);
+                    labelMap.put(labels[i], lineArray[i].replaceAll("^\"|\"$", ""));
                 }
 
                 itemsList.add(labelMap);
-//                if (myClass.getCanonicalName().equals(Attribute.class.getCanonicalName())) {
-//                    Attribute attribute = new Attribute(++id, lineArray[0], labelMap);
-//                    attributeList.add(attribute);
-//                    attributeRepository.save(attribute);
-//                } else if (myClass.getCanonicalName().equals(Option.class.getCanonicalName())) {
-//                    Attribute attribute = attributeRepository.findAllByCode(lineArray[lineArray.length - 2]);
-//                    if (attribute != null) {
-//                        Option option = new Option(++id, lineArray[0], lineArray[lineArray.length - 2], lineArray[lineArray.length - 1], attribute, labelMap);
-//                        optionList.add(option);
-//                        optionRepository.save(option);
-//                    }
-//                }
             }
 
             return itemsList;
@@ -96,7 +79,7 @@ public class ParserService {
         List<Option> optionList = new ArrayList<>();
 
         itemsList.forEach(item ->{
-            Attribute attribute = attributeRepository.findAllByCode(item.get("attribute"));
+            Attribute attribute = attributeRepository.findByCode(item.get("attribute"));
             optionList.add(new Option(item, attribute));
         });
 

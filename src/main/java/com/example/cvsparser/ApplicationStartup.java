@@ -1,9 +1,5 @@
 package com.example.cvsparser;
 
-import com.example.cvsparser.dto.Attribute;
-import com.example.cvsparser.dto.AttributeRepository;
-import com.example.cvsparser.dto.Option;
-import com.example.cvsparser.dto.OptionRepository;
 import com.example.cvsparser.service.ParserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

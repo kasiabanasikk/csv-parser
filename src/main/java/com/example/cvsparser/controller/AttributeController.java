@@ -15,17 +15,21 @@ import java.util.List;
 @RestController
 public class AttributeController {
 
+    private AttributeService attributeService;
+
     @Autowired
-    AttributeService attributeService;
+    public AttributeController(AttributeService attributeService) {
+        this.attributeService = attributeService;
+    }
 
     @RequestMapping("/attributes")
-    public List<Attribute> getAllAttributes(){
+    public List<Attribute> getAllAttributes() {
         return attributeService.getAllAttributes();
     }
 
     @RequestMapping("/attributes/{code}")
     public AttributeResponseObject getAttributeByLang(@PathVariable("code") String code,
-                                                      @RequestParam(value = "lang") String lang){
+                                                      @RequestParam(value = "lang") String lang) {
         return attributeService.getAttributeByLang(code, lang);
     }
 }

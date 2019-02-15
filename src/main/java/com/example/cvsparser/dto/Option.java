@@ -20,16 +20,16 @@ public class Option {
     final Logger logger = LoggerFactory.getLogger(Option.class);
     @Transient
     @JsonIgnore
-    private static final String LABEL_PATTERN = "^label\\-.*";
+    private final String LABEL_PATTERN = "^label\\-.*";
     @Transient
     @JsonIgnore
-    private static final String CODE_PATTERN = "code";
+    private final String CODE_PATTERN = "code";
     @Transient
     @JsonIgnore
-    private static final String SORT_ORDER_PATTERN = "sort_order";
+    private final String SORT_ORDER_PATTERN = "sort_order";
     @Transient
     @JsonIgnore
-    private static final String ATTRIBUTE_PATTERN = "attribute";
+    private final String ATTRIBUTE_PATTERN = "attribute";
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -43,7 +43,6 @@ public class Option {
 
     @ManyToOne
     @JsonBackReference
-//    @JsonIgnore
     private Attribute attributeObject;
 
     @JsonProperty("label")

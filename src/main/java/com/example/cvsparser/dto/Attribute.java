@@ -22,13 +22,13 @@ public class Attribute {
     @Transient
     @JsonIgnore
     final Logger logger = LoggerFactory.getLogger(Attribute.class);
-    @Transient
-    @JsonIgnore
-    private static final String LABEL_PATTERN = "^label\\-.*";
-    @Transient
-    @JsonIgnore
-    private static final String CODE_PATTERN = "code";
 
+    @Transient
+    @JsonIgnore
+    private final String LABEL_PATTERN = "^label\\-.*";
+    @Transient
+    @JsonIgnore
+    private final String CODE_PATTERN = "code";
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)

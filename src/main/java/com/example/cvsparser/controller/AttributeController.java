@@ -3,7 +3,7 @@ package com.example.cvsparser.controller;
 import com.example.cvsparser.dto.Attribute;
 import com.example.cvsparser.dto.AttributeResponseObject;
 import com.example.cvsparser.service.AttributeService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,15 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 
+@AllArgsConstructor
 @RestController
 public class AttributeController {
 
     private AttributeService attributeService;
-
-    @Autowired
-    public AttributeController(AttributeService attributeService) {
-        this.attributeService = attributeService;
-    }
 
     @RequestMapping("/attributes")
     public List<Attribute> getAllAttributes() {

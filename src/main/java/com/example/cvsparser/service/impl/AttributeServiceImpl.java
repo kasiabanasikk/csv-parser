@@ -6,63 +6,52 @@ import com.example.cvsparser.dto.AttributeResponseObject;
 import com.example.cvsparser.exceptions.AttributeNotFoundException;
 import com.example.cvsparser.exceptions.LanguageNotFoundException;
 import com.example.cvsparser.service.AttributeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 
+@Slf4j
+@AllArgsConstructor
 @Service
 public class AttributeServiceImpl implements AttributeService {
 
     private AttributeRepository attributeRepository;
 
-    @Autowired
-    public AttributeServiceImpl(AttributeRepository attributeRepository) {
-        this.attributeRepository = attributeRepository;
-    }
-
-    Logger logger = LoggerFactory.getLogger(AttributeServiceImpl.class);
-
-
     public List<Attribute> getAllAttributes() {
-        try {
-            return attributeRepository.findAll();
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-        return Collections.emptyList();
+        return attributeRepository.findAll();
     }
 
     public AttributeResponseObject getAttributeByLang(String code, String lang) {
         List<String> sizeList = new ArrayList<>();
         String attributeName = null;
         Attribute attribute = attributeRepository.findByCode(code);
-        if (attribute != null) {
-            for (Map.Entry<String, String> entry : attribute.getLabels().entrySet()) {
-                if (entry.getKey().contains(lang)) {
-                    attributeName = attribute.getLabels().get(entry.getKey());
-                }
-            }
-            if(attributeName == null){
-                throw new LanguageNotFoundException(String.format("Language: %s  not found", lang));
-            }
 
-            attribute.getOptionList().forEach(o -> {
-                o.getLabels().keySet().forEach(key -> {
-                    if (key.contains(lang)) {
-                        sizeList.add(o.getLabels().get(key));
-                    }
-                });
-        });
-            return new AttributeResponseObject(attributeName, sizeList);
-        } else {
-            throw new AttributeNotFoundException(String.format("Attribute with code: %s not found", code));
+        if (attribute == null) {
+            throw new AttributeNotFoundException(
+                    String.format("Attribute with code: %s not found", code));
         }
+
+        for (Map.Entry<String, String> entry : attribute.getLabels().entrySet()) {
+            if (entry.getKey().contains(lang)) {
+                attributeName = attribute.getLabels().get(entry.getKey());
+            }
+        }
+        if (attributeName == null) {
+            throw new LanguageNotFoundException(
+                    String.format("Language: %s  not found", lang));
+        }
+
+        attribute.getOptionList().forEach(o -> o.getLabels().keySet().forEach(key -> {
+            if (key.contains(lang)) {
+                sizeList.add(o.getLabels().get(key));
+            }
+        }));
+
+        return new AttributeResponseObject(attributeName, sizeList);
     }
 }

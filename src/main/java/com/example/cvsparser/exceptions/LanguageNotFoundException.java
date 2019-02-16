@@ -1,8 +1,8 @@
 package com.example.cvsparser.exceptions;
 
-public class LanguageNotFoundException extends RuntimeException{
+public class LanguageNotFoundException extends RuntimeException {
 
-    public LanguageNotFoundException(String message){
+    public LanguageNotFoundException(String message) {
         super(message);
     }
 }

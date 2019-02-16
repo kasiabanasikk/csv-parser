@@ -9,6 +9,7 @@ import java.util.List;
 public interface AttributeService {
 
     AttributeResponseObject getAttributeByLang(String code, String lang);
+
     List<Attribute> getAllAttributes();
 
 }

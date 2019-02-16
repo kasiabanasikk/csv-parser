@@ -1,33 +1,45 @@
 package com.example.cvsparser;
 
 import com.example.cvsparser.service.ParserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Paths;
+import java.io.FileNotFoundException;
+import java.net.URL;
 
+
+@Slf4j
+@AllArgsConstructor
 @Component
 public class ApplicationStartup implements ApplicationListener<ApplicationReadyEvent> {
 
-    @Autowired
     ParserService parserService;
-
-    Logger logger = LoggerFactory.getLogger(ApplicationStartup.class);
 
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
+        log.info("Loading from csv files");
 
-        logger.info("Loading from csv files");
+        URL optionsUrl = ApplicationStartup.class.getClassLoader().getResource("options.csv");
+        URL attributesUrl = ApplicationStartup.class.getClassLoader().getResource("attributes.csv");
 
-        String pathOptions = Paths.get(".").toAbsolutePath().normalize().toString()+"\\src" +
-                "\\main\\resources\\options.csv";
-        String pathAttributes = Paths.get(".").toAbsolutePath().normalize().toString()+"\\src" +
-                "\\main\\resources\\attributes.csv";
-        parserService.sendToAttributeRepository(pathAttributes);
-        parserService.sendToOptionRepository(pathOptions);
+        try {
+            if (optionsUrl == null) {
+                throw new FileNotFoundException("options.csv");
+            } else if (attributesUrl == null) {
+                throw new FileNotFoundException("attributes.csv");
+            }
+
+            String pathOptions = optionsUrl.getPath();
+            String pathAttributes = attributesUrl.getPath();
+
+            parserService.sendToAttributeRepository(pathAttributes);
+            parserService.sendToOptionRepository(pathOptions);
+
+        } catch (FileNotFoundException e) {
+            log.error("File not found", e.getMessage());
+        }
     }
 }

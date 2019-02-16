@@ -6,8 +6,10 @@ import java.util.Map;
 
 public interface ParserService {
 
-    List<Map<String,String>> readCsv(String fileName);
+    List<Map<String, String>> readCsv(String fileName);
+
     void sendToAttributeRepository(String fileName);
+
     void sendToOptionRepository(String fileName);
 
 }

@@ -1,8 +1,8 @@
 package com.example.cvsparser.exceptions;
 
-public class AttributeNotFoundException extends RuntimeException{
+public class AttributeNotFoundException extends RuntimeException {
 
-    public AttributeNotFoundException(String message){
+    public AttributeNotFoundException(String message) {
         super(message);
     }
 }
